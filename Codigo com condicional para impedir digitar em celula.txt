@@ -1,0 +1,19 @@
+Dim clickedCell As Range
+Private Sub Worksheet_SelectionChange(ByVal Target As Range)
+
+Set clickedCell = Target
+
+linh = clickedCell.Row
+
+    ' Verifica se a célula A1 é "sim" e se o usuário tenta selecionar B1
+    If Me.Range("A" & linh).Value = "sim" Then
+        If Not Intersect(Target, Me.Range("B" & linh)) Is Nothing Then
+            ' Redireciona a seleção para A1 se o usuário tentar selecionar B1
+            Me.Range("A" & linh).Select
+            Me.Range("B" & linh).ClearContents
+            MsgBox "Você não pode Digitar quando a resposta for 'sim'.", vbExclamation
+        End If
+    End If
+    
+    
+End Sub
