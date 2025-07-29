@@ -1,0 +1,79 @@
+modelo simples Api Json
+
+Sub ConverteJson_Informe() ' construindo o Json dos dados
+Dim nomeArquivo As String
+Dim linha1 As Range
+Dim celAtual As Range
+Dim contaColunas As Integer
+Dim CPFInforme, IdPeriodo
+Dim posicao
+Dim Cabecalhos(1 To 21) As String
+Dim textoRetorno, codigoInternoOp As String
+contaColunas = 12
+j = 10
+posicao = BInforme1.Cells(3, 13)
+IdPeriodo = BInforme1.Cells(1, 4)
+Vhora = Format(Time, "hhmmssms")
+Vhora = Right(Vhora, 8)
+codigoInternoOp = Format(Date, "yydd") & Vhora
+'ano -dia - minunto - segundo - milesegundo
+    textoRetorno = "{" & """" & "codigoInternoOperacao" & """:" & codigoInternoOp & ","
+    textoRetorno = textoRetorno & """" & "quadro4" & """:" & "[" & "{"
+    textoRetorno = textoRetorno & """" & "descricao" & """:" & """" & "APLICACOES DE RENDA FIXA ISENTAS" & ""","
+        
+        For i = 10 To contaColunas
+        
+           If i = 10 Or i = 11 Or i = 12 Then
+           
+           Cabecalhos(i) = BInforme1.Cells(2, j)
+           textoRetorno = textoRetorno & """" & Cabecalhos(i) & """:" & "" & BInforme1.Cells(3, j) & ""
+           
+           End If
+           
+            
+                j = j + 1
+            If (i = contaColunas) Then
+               
+                 textoRetorno = textoRetorno & "}"
+            Else
+            
+                textoRetorno = textoRetorno & ","
+            End If
+        Next
+       
+    textoRetorno = textoRetorno & "]" & "}"
+    
+    CPFInforme = BInforme1.Cells(3, 9)
+  
+    Dim MyRequest As Object
+    Set MyRequest = CreateObject("WinHttp.WinHttpRequest.5.1")
+    
+    'MyRequest.Open "PUT", "api/v1/informes/atualiza?tipoDocumento=1&inscricao=" & CPFInforme & "&idPeriodo=" & IdPeriodo & "" '- Homologação
+    MyRequest.Open "PUT", "https:api/v1/informes/atualiza?tipoDocumento=1&inscricao=" & CPFInforme & "&idPeriodo=" & IdPeriodo & "" '- Produção
+
+    MyRequest.setRequestHeader "Accept", "application/json"
+    MyRequest.setRequestHeader "Content-Type", "application/json"
+    'MyRequest.setRequestHeader "X-API-KEY", "Senha" '- Homologação
+    MyRequest.setRequestHeader "X-API-KEY", "Senha" '- Produção
+                                             
+    
+   
+    MyRequest.send textoRetorno
+
+    Dim MsgInfor As String
+    Dim respostinform As Dictionary
+    Set respostinform = JsonConverter.ParseJson(MyRequest.responseText)
+    
+    
+    
+    If MyRequest.Status <> 200 Then
+       
+      BInforme1.Cells(posicao, 5) = "Erro"
+        'MsgBox ("não liberada no Barramento")
+    Else
+      BInforme1.Cells(posicao, 5) = "Enviado"
+      BInforme1.Range(Cells(posicao, 1), Cells(posicao, 5)).Interior.ColorIndex = 50
+    End If
+   
+   
+End Sub

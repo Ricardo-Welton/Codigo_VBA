@@ -1,0 +1,120 @@
+Modelo para Usuário, senha e token
+
+Dim Token
+Dim JsonEnvio As String
+Sub gerartoken()
+Dim JsonCred
+   
+    JsonCred = "{" & """" & "username" & """:" & """" & "suporte" & "" & ""","
+    JsonCred = JsonCred & """" & "password" & """:" & """" & "P@ss1234" & "" & """}"
+     
+    Dim MyRequest As Object
+    Set MyRequest = CreateObject("WinHttp.WinHttpRequest.5.1")
+    
+    MyRequest.Open "POST", "https:api/v1/security/auth/" 'Url completa da API
+    
+    MyRequest.setRequestHeader "Accept", "application/json"
+    MyRequest.setRequestHeader "Content-Type", "application/json"
+   
+
+   
+    MyRequest.send JsonCred
+
+    Dim MsgInfor As String
+    Dim respostinform As Dictionary
+    Set respostinform = JsonConverter.ParseJson(MyRequest.ResponseText)
+    
+    
+    
+    If MyRequest.Status <> 200 Then
+       
+      MsgBox ("Token não Gerado")
+    Else
+      Token = respostinform("token")
+    End If
+   
+   
+End Sub
+-------------------------------------------------------
+Sub Boleta_TPC_Cetip()
+Dim Cabecalhos(1 To 23) As String
+contaColunas = 23
+j = 2
+        JsonEnvio = ""
+        JsonEnvio = JsonEnvio & "{"
+        For i = 2 To contaColunas
+         
+         If i = 2 Or i = 5 Or i = 9 Or i = 10 Or i = 13 Or i = 15 Or i = 18 Or i = 21 Or i = 23 Then
+            
+            Cabecalhos(i) = PlanB01.Cells(1, j)
+            JsonEnvio = JsonEnvio & """" & Cabecalhos(i) & """:" & "" & PlanB01.Cells(2, j) & ""
+            If i <> 23 Then
+            JsonEnvio = JsonEnvio & ","
+            End If
+           
+         Else
+            If i = 14 Then
+            formattedDate = Format(PlanB01.Cells(2, j), "yyyy/mm/dd") & "T" & Format(PlanB01.Cells(2, j), "hh:nn:ss") & Format(PlanB01.Cells(2, j), "+hh:nn;-hh:nn")
+            Cabecalhos(i) = PlanB01.Cells(1, j)
+            JsonEnvio = JsonEnvio & """" & Cabecalhos(i) & """:" & """" & formattedDate & """"
+            JsonEnvio = JsonEnvio & ","
+            Else
+            Cabecalhos(i) = PlanB01.Cells(1, j)
+            JsonEnvio = JsonEnvio & """" & Cabecalhos(i) & """:" & """" & PlanB01.Cells(2, j).Value & """"
+            If i <> 23 Then
+            JsonEnvio = JsonEnvio & ","
+            End If
+            End If
+         End If
+          j = j + 1
+        Next
+       
+    JsonEnvio = JsonEnvio & "}"
+    gerartoken
+    EnviarBoleta
+
+End Sub
+
+Sub EnviarBoleta()
+    Dim MyRequest As Object
+    Set MyRequest = CreateObject("WinHttp.WinHttpRequest.5.1")
+    
+     ' URL da API
+    Url = "https:api/v1/security/auth/" 'Url completa da API
+
+     
+   
+    MyRequest.Open "POST", Url, False
+    MyRequest.setRequestHeader "Accept", "application/json"
+    MyRequest.setRequestHeader "Content-Type", "application/json"
+    MyRequest.setRequestHeader "Authorization", "Bearer " & Token
+    
+    MyRequest.send JsonEnvio
+    
+    
+    ' Verifica o status da resposta
+    If MyRequest.Status = 200 Then
+        response = MyRequest.ResponseText
+        MsgBox "Resposta do servidor: " & response
+    Else
+        MsgBox "Erro: " & MyRequest.Status & " - " & MyRequest.statusText
+    End If
+       
+   
+End Sub
+
+Function Base64Encode(text As String) As String
+    Dim arrData() As Byte
+    arrData = StrConv(text, vbFromUnicode)
+    Dim objXML As Object
+    Dim objNode As Object
+    Set objXML = CreateObject("MSXml2.DOMDocument")
+    Set objNode = objXML.createElement("b64")
+    objNode.DataType = "bin.base64"
+    objNode.nodeTypedValue = arrData
+    Base64Encode = objNode.text
+    Set objNode = Nothing
+    Set objXML = Nothing
+End Function
+
+
