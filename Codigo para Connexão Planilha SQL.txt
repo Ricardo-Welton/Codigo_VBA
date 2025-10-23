@@ -1,0 +1,69 @@
+Usar Referencia: Microsoft Activex Data Objects 2.8 Library
+
+
+Sub ConsultaSQL()
+
+Dim ConexaoPlan As New ADODB.Connection
+Dim rsConsulta As New ADODB.Recordset
+Dim LocalArquivo
+Dim sql As String
+Dim i
+
+Planilha2.Range("B3:AB650000").ClearContents
+
+Planilha1.Select
+
+LocalArquivo = Planilha8.Cells(5, 1)
+
+Planilha1.Range("A1:AH5000").Value = Empty
+Planilha1.Range("A1").Select
+
+ConexaoPlan.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & LocalArquivo & ";Extended Properties=Excel 8.0"
+ConexaoPlan.Open
+
+'Consulta faixa de datas
+sql = "Select * from [Cotistas$] where isnull(CÓDIGO) = False"
+
+rsConsulta.Open sql, ConexaoPlan, adOpenKeyset, adLockOptimistic
+
+For i = 0 To rsConsulta.Fields.Count - 1
+
+    Cells(1, i + 1) = rsConsulta.Fields(i).Name
+
+Next
+
+Planilha1.Range("A2").CopyFromRecordset rsConsulta
+
+rsConsulta.Close
+ConexaoPlan.Close
+
+End Sub
+
+
+
+-----------------------------------------------------------------------------------------------
+
+Sub ConsultaSQL()
+
+Dim ConexaoPlan As New ADODB.Connection
+Dim rsConsulta As New ADODB.Recordset
+Dim sql As String
+
+PlanCon01.Range("A3:AH5000").Value = Empty
+PlanCon01.Activate
+PlanCon01.Range("A3").Select
+
+caminho = "C:\Users\ricardo.fasters\OneDrive - SINGULARE INVEST\Documents\Novos Projeto\A Fazer\Fabiana - Em andamento\Formulario Gestor.xlsm"
+
+ConexaoPlan.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & caminho & ";Extended Properties=Excel 8.0"
+ConexaoPlan.Open
+
+'Consulta faixa de datas
+sql = "Select*from [Plan1$A3:N65000]"
+
+rsConsulta.Open sql, ConexaoPlan, adOpenKeyset, adLockOptimistic
+
+PlanCon01.Range("A3").CopyFromRecordset rsConsulta
+
+End Sub
+

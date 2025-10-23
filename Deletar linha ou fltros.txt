@@ -1,0 +1,44 @@
+Sub Deletar_linha()
+Dim i, linhTed, LinhTet As Double
+Dim ult
+Application.Calculation = xlCalculationManual
+i = 2
+
+
+Do While Planilha2.Cells(i, 1) <> ""
+
+    If Planilha2.Cells(i, 11) = 1 Then
+                
+        Planilha2.Rows(i).Delete
+        i = 1
+    End If
+
+i = i + 1
+Loop
+
+End Sub
+
+Sub FiltrarEExcluir()
+    Dim ws As Worksheet
+    Dim filtro As String
+    
+    ' Defina a planilha onde você quer trabalhar
+    Set ws = ThisWorkbook.Sheets("Base_PL")
+  
+    filtro = "1"
+        
+    With ws
+        .AutoFilterMode = False ' Limpar qualquer filtro existente
+        .Range("K1:K" & .Cells(.Rows.Count, "K").End(xlUp).Row).AutoFilter Field:=1, Criteria1:=filtro
+    End With
+    
+    ' Excluir linhas filtradas (exceto cabeçalho)
+    On Error Resume Next ' Ignorar erros se não houver células visíveis
+    With ws.Range("K2:K" & ws.Cells(ws.Rows.Count, "K").End(xlUp).Row) ' Excluir a partir da linha 2
+        .SpecialCells(xlCellTypeVisible).EntireRow.Delete
+    End With
+    On Error GoTo 0 ' Retornar ao tratamento normal de erros
+    
+    ' Limpar filtro
+    ws.AutoFilterMode = False
+End Sub

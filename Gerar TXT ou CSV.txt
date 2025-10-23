@@ -1,0 +1,32 @@
+para gerar txt troque (lineText & ";") por (lineText & "vbtab")
+
+
+Sub geraAquivoPsitivo()
+Dim linhafin As Double
+
+linhafin = Planilha6.Cells(Rows.Count, 1).End(xlUp).Row
+    Dim filename As String, lineText As String
+    Dim myrng As Range, i, j
+    
+    filename = Range("Diretorio").Text & Planilha3.Cells(3, 4) & "-Positivo" & ".CSV"
+    
+    Open filename For Output As #1
+
+    For i = 1 To linhafin 'Range("Dados").Rows.Count
+    
+        If Range("DadosPos").Cells(i, 1).Value <> "" Then
+        
+            For j = 1 To Range("DadosPos").Columns.Count
+                lineText = IIf(j = 1, "", lineText & ";") & Range("DadosPos").Cells(i, j).Value
+            Next j
+            Print #1, lineText
+        Else
+        End If
+        
+    Next i
+        ''''
+Close #1
+
+
+
+End Sub

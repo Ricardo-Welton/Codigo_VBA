@@ -1,0 +1,8 @@
+Sub Clear()
+Dim rLocal As Range
+
+'Atribuição das variáveis
+  Set rLocal = Plan1.Range("C2:C8")
+
+    rLocal.Replace What:=" ", Replacement:=""
+End Sub

@@ -1,0 +1,3 @@
+Range("A" & variável).Select
+
+Range(Cells(5, coluna1):Cells(13, coluna1)).Copy

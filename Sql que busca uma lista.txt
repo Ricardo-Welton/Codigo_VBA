@@ -1,0 +1,32 @@
+    sql = ""
+    sql = "select cd_cotista, id_banco, cd_agencia_externa, cd_conta_externa from cot_conta_externa "
+    sql = sql & "where ic_sn_ativa = 'S' "
+    sql = sql & "and ic_sn_default = 'S' "
+    'sql = sql & "and cd_cotista in (" & lista & ")"
+    'sql = sql & "and cd_cotista = '" & dadosCotista & "'"
+           
+    Set rs = conn.Execute(sql)
+    
+    Sheets("Planilha1").Cells(2, 3).CopyFromRecordset rs
+
+----------------aqui abaixo constroe a lista ----------------------------------------
+
+Sub teste()
+Dim i
+i = 4
+
+'lista = "("
+
+While Sheets("Posição").Cells(i, 1) <> ""
+
+Nome = "'" & Trim(Sheets("Posição").Cells(i, 1)) & "'"
+lista = lista + Nome + ","
+
+i = i + 1
+
+Wend
+lista = lista + Nome
+
+complemento
+
+End Sub

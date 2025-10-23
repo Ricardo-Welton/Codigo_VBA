@@ -1,0 +1,18 @@
+
+Sub Verifica_Arquivo()
+Dim strPath As Variant
+'Arquivo que verificaremos
+strPath = FundosPlanilha1.Cells(18, 1) & FundosPlanilha1.Cells(2, 1) & ".PDF"
+If Dir(strPath) = vbNullString Then
+strCheck = False
+Else
+strCheck = True
+End If
+If strCheck = False Then
+Mensagem = MsgBox("O arquivo: '" & strPath & "' foi encontrado!", vbInformation)
+'Bloco de ação da Rotina caso o arquivo exista.
+Else
+Mensagem = MsgBox("O arquivo: '" & strPath & "' não foi encontrado!", vbCritical)
+'Bloco de ação da Rotina caso o arquivo não exista.
+End If
+End Sub

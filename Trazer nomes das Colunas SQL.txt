@@ -1,0 +1,47 @@
+Sub consulta_Estoque()
+    Dim conn As ADODB.Connection
+    Dim rs As ADODB.Recordset
+    Dim sConnString As String
+    Dim dadosCotista As String
+    Dim cmd As ADODB.Command
+    
+    Application.ScreenUpdating = False
+    Application.DisplayAlerts = False
+    
+    sConnString = "Provider=SQLOLEDB.1;Password=Sing!@2023Bd;Persist Security Info=True;User ID=S_PROC_AUTOMACAO;Data Source=CSTD1DB;Use Procedure for Prepare=1;Auto Translate=True;Packet Size=4096;Use Encryption for Data=False;Tag with column collation when possible=False;Initial Catalog=FidcCustodia"
+    Set conn = New ADODB.Connection
+    Set rs = New ADODB.Recordset
+    conn.Open sConnString
+    Dim sql As String
+      
+Dim Dataini
+
+
+sql = "    SELECT"
+sql = sql & " COLUMN_NAME"
+sql = sql & " FROM INFORMATION_SCHEMA.Columns"
+sql = sql & " WHERE TABLE_NAME = 'TB_RECEBIVEL'"
+      
+    
+    Set rs = New ADODB.Recordset
+    
+    On Error GoTo SEGUE_ROTINA
+    
+    
+    rs.Open sql, conn
+    
+    For i = 0 To rs.Fields.Count - 1
+        PlanCer7.Cells(1, i + 1).Value = rs.Fields(i).Name
+    Next i
+
+    
+      
+    If rs.EOF = Falso Then
+        PlanCer7.Cells(2, 1).CopyFromRecordset rs
+    End If
+    
+    MsgBox ("Consulta conclida")
+    
+SEGUE_ROTINA:
+  
+ End Sub

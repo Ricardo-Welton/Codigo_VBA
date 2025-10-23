@@ -1,0 +1,20 @@
+Sub teste2()
+    Dim posUltimaBarra As Integer
+    Dim nomeDiretorio As String
+    
+    importFileName = Application.GetOpenFilename(FileFilter:="Arquivo do Excel (*.xml; *.xml), *.xml;*.xml", Title:="Escolha um arquivo xml")
+
+    ' Encontre a posição da última barra na URL
+    posUltimaBarra = InStrRev(importFileName, "\")
+
+    ' Extraia o nome do diretório
+    If posUltimaBarra > 0 Then
+        nomeDiretorio = Mid(importFileName, 1, posUltimaBarra - 1)
+    Else
+        nomeDiretorio = importFileName ' Se não houver barra, retornar a URL completa
+    End If
+
+    ' Retorne o nome do diretório
+    ExtrairNomeDiretorioDaURL = nomeDiretorio
+    
+End Sub

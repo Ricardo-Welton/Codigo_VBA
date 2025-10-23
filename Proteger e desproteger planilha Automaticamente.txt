@@ -1,0 +1,5 @@
+  ActiveSheet.Unprotect
+ ActiveSheet.Protect DrawingObjects:=True, Contents:=True, Scenarios:=True _
+        , AllowFormattingRows:=True, AllowDeletingRows:=True
+    ActiveSheet.EnableSelection = xlUnlockedCells
+            

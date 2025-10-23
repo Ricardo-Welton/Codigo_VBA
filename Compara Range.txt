@@ -1,0 +1,59 @@
+Dim FindString As String
+    Dim Rng As Range
+    FindString = ActiveCell.Text
+    If Trim(FindString) <> "" Then
+    
+        With Sheets("TABELAS_EQUIVALENCIA").Range("C:C")
+            Set Rng = .Find(What:=FindString, _
+                            After:=.Cells(.Cells.Count), _
+                            LookIn:=xlValues, _
+                            LookAt:=xlWhole, _
+                            SearchOrder:=xlByRows, _
+                            SearchDirection:=xlNext, _
+                            MatchCase:=False)
+            If Not Rng Is Nothing Then
+                retCNPJ = (Rng.Offset(0, 2))
+            Else
+                retCNPJ = ("NAO ENCONTRADO")
+                Planilha3.Range("A10000").End(xlUp).Offset(1, 0) = retCNPJ
+            End If
+        End With
+    End If
+
+
+-----------------------------------Deletar linha Usando Range --------------------------------------
+
+Sub Delatar_linha03()
+Dim i, linhTed, LinhTet As Double
+Dim ult
+
+i = 2
+
+
+Do While Planilha7.Cells(i, 1) <> ""
+
+     FindString = "02"
+    
+   
+        With Sheets("Dados Bolsa").Range("A:A")
+            Set Rng = .Find(What:=FindString, _
+                            After:=.Cells(.Cells.Count), _
+                            LookIn:=xlValues, _
+                            LookAt:=xlWhole, _
+                            SearchOrder:=xlByRows, _
+                            SearchDirection:=xlNext, _
+                            MatchCase:=False)
+            If Not Rng Is Nothing Then
+                
+                Rng.Offset(0, 0).EntireRow.Delete
+                'Planilha7.Rows(i).Delete
+                
+            Else
+                Exit Do
+            End If
+            
+         End With
+i = i + 1
+Loop
+
+End Sub

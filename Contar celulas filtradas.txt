@@ -1,0 +1,1 @@
+dblSubtotal = Application.WorksheetFunction.Subtotal(3, BPlanTed.Range("A1:A65000"))

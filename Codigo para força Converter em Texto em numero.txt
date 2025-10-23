@@ -1,0 +1,19 @@
+Sub ConverterNumeros()
+    Dim i As Long
+    
+    PlanNotas01.Select
+    
+    ultLin = PlanNotas01.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    For i = 3 To ultLin
+    
+    
+        PlanNotas01.Cells(i, 41) = "xh@#" & PlanNotas01.Cells(i, 41)
+
+    Next i
+
+    Cells.Replace What:="xh@#", Replacement:="", LookAt:=xlPart, SearchOrder _
+        :=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False _
+        , FormulaVersion:=xlReplaceFormula2
+    
+End Sub

@@ -1,0 +1,61 @@
+Sub LendoJson_Conta() ' lendo o Json para trazer dados
+Dim CPFInforme
+Dim i, num
+
+i = 2
+
+Application.ScreenUpdating = False
+Application.Calculation = xlCalculationManual
+Application.DisplayAlerts = False
+    
+ Do While PlanSelic3.Cells(i, 1) <> Empty
+           
+                    CPFInforme = PlanSelic3.Cells(i, 2)
+    
+                    Dim MyRequest As Object
+                    Set MyRequest = CreateObject("WinHttp.WinHttpRequest.5.1")
+                    
+                    MyRequest.Open "GET", "https:///api/v2/contas?tipoDocumento=2&inscricao=" & CPFInforme & "& prioritaria=S"
+                    'MyRequest.Open "GET", "https://api/v2/contas?tipoDocumento=2&inscricao=" & CPFInforme & "&prioritaria=S"
+                    
+                    MyRequest.setRequestHeader "Accept", "application/json"
+                    MyRequest.setRequestHeader "Content-Type", "application/json"
+                    'MyRequest.setRequestHeader "X-API-KEY", "Senha" '- Homologação
+                    MyRequest.setRequestHeader "X-API-KEY", "Senha" '- Produção
+                    MyRequest.send
+                    
+                    Dim json As Dictionary
+                    Set json = JsonConverter.ParseJson(MyRequest.responseText)
+                    If json.Count = 0 Then Exit Sub
+                    num = json("data")("contas").Count
+                    
+                    If MyRequest.Status = 200 Then
+                        
+                    
+                        For j = 1 To num
+                        On Error GoTo tratamentoErro
+                            prior = json("data")("contas")(j)("prioritaria")
+                          If prior = "S" Then
+                             PlanSelic3.Cells(i, 2) = json("data")("contas")(j)("numero")
+                             Exit For
+                          End If
+                          If prior = "N" Then
+                             PlanSelic3.Cells(i, 2) = CPFInforme & "-" & "Não Encontrado"
+                          End If
+                        Next j
+                        
+                    Else
+                    PlanSelic3.Cells(i, 2) = CPFInforme & "-" & "Não Encontrado"
+                    End If
+tratamentoErro:
+   i = i + 1
+   
+   
+  Loop
+  
+Application.ScreenUpdating = True
+Application.Calculation = xlCalculationAutomatic
+Application.DisplayAlerts = True
+  
+End Sub
+

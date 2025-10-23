@@ -1,0 +1,23 @@
+Sub ColarFormulaUsandoRange()
+    Dim ws As Worksheet
+    Dim fórmula As String
+    Dim colunaDestino As Range
+    
+    ' Defina a planilha na qual você deseja colar a fórmula
+    Set ws = ThisWorkbook.Sheets("Resultado")
+    
+    ' Defina a fórmula que você deseja colar
+    fórmula = "=IFERROR(VLOOKUP(J2, Planilha3!$A$1:$A$14357, 1, FALSE), 0)" ' Substitua pela sua fórmula
+    
+    ' Defina o intervalo de destino (a coluna onde a fórmula será colada)
+    Set colunaDestino = ws.Range("k2:K" & ws.Cells(ws.Rows.Count, "A").End(xlUp).Row)
+    
+    ' Cole a fórmula nas células do intervalo de destino
+    colunaDestino.formula = fórmula
+End Sub
+
+---------------------------------------------------------------
+
+formula = "=IFERROR(VLOOKUP(J2, Planilha3!$A$1:$A$14357, 1, FALSE), 0)"
+    ultLin = Planilha4.Cells(Rows.Count, 1).End(xlUp).Row
+    Planilha4.Range(Cells(2, 11), Cells(ultLin, 11)).formula = formula

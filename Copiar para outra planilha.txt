@@ -1,0 +1,212 @@
+Sub CriarESalvarNovaPlanilha()
+    Dim wsOrigem As Worksheet
+    Dim wsNova As Worksheet
+    Dim nomeOrigem As String
+    Dim caminhoArquivo As String
+    Dim nomeArquivo As String
+    
+    ' Defina o nome da aba de origem
+    nomeOrigem = "Conciliação" ' Altere para o nome da aba que deseja copiar
+    
+    ' Verifique se a aba de origem existe
+    On Error Resume Next
+    Set wsOrigem = ThisWorkbook.Sheets(nomeOrigem)
+    Set wsOrigem2 = ThisWorkbook.Sheets(nomeOrigem)
+    On Error GoTo 0
+    
+    If wsOrigem Is Nothing Then
+        MsgBox "A aba especificada não foi encontrada!", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Crie uma nova pasta de trabalho temporária
+    Workbooks.Add
+    Set wsNova = ActiveSheet
+    
+    ' Copie o conteúdo da aba de origem para a nova planilha
+    wsOrigem.Cells.Copy Destination:=wsNova.Cells
+    
+    ' Renomeie a nova aba, se necessário
+    On Error Resume Next
+    wsNova.Name = "Resultado"
+    On Error GoTo 0
+    
+    ' Defina o caminho do arquivo para salvar na pasta Temp no C:
+    caminhoArquivo = PlanCer2.Cells(5, 1)
+    nomeArquivo = "Conciliacao_CERC_" & Format(Date, "yyyymmdd")
+    
+    ' Salve a nova pasta de trabalho
+    If Dir(caminhoArquivo, vbDirectory) = "" Then
+        MsgBox "A pasta Temp não foi encontrada!", vbExclamation
+        Exit Sub
+    End If
+    
+    ActiveWorkbook.SaveAs Filename:=caminhoArquivo & nomeArquivo, FileFormat:=xlOpenXMLWorkbook
+    
+    ' Exibir uma mensagem de confirmação
+    MsgBox "Nova planilha criada e salva com sucesso em " & caminhoArquivo & nomeArquivo
+    
+    ' Fechar a nova pasta de trabalho sem salvar novamente
+    ActiveWorkbook.Close False
+End Sub
+
+
+
+Sub CopiarAbasParaNovaPlanilha()
+    Dim novaPasta As Workbook
+    Dim aba1 As Worksheet
+    Dim aba2 As Worksheet
+    
+    ' Define as abas a serem copiadas da planilha original
+    Set aba1 = ThisWorkbook.Sheets("Conciliação")
+    Set aba2 = ThisWorkbook.Sheets("Nao_Encontrados")
+    
+    ' Cria uma nova pasta de trabalho
+    Set novaPasta = Workbooks.Add
+    
+    ' Copia as abas para a nova pasta de trabalho
+    aba1.Copy Before:=novaPasta.Sheets(1)
+    aba2.Copy Before:=novaPasta.Sheets(2)
+    
+    ' Renomeia as abas na nova planilha
+    novaPasta.Sheets(1).Name = "Resultado_Cerc_Fromtis"
+    novaPasta.Sheets(2).Name = "Fromtis_Cerc"
+    
+    ' Salva a nova planilha com o nome específico
+    caminhoArquivo = PlanCer2.Cells(5, 1)
+    nomeArquivo = "Conciliacao_CERC_" & Format(Date, "yyyymmdd")
+    novaPasta.SaveAs caminhoArquivo & nomeArquivo
+    
+    ' Exibe uma mensagem de sucesso
+    MsgBox "As abas foram copiadas e a nova planilha foi salva com sucesso!"
+     ' Fechar a nova pasta de trabalho sem salvar novamente
+    ActiveWorkbook.Close False
+    Sheets("Nao_Encontrados").Visible = False
+    
+End Sub
+
+
+
+Sub SepararNaoEncontrados()
+    
+    Sheets("Nao_Encontrados").Visible = True
+    PlanCer3.Select
+    Range("A2").Select
+    ActiveSheet.Range("$A$1:$U$129083").AutoFilter Field:=16, Criteria1:="<>"
+    
+    Range("A2:P37").Select
+    Range(Selection, Selection.End(xlDown)).Select
+    Selection.Copy
+    Sheets("Nao_Encontrados").Select
+    Range("A2").Select
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False
+    Columns("P:P").EntireColumn.AutoFit
+    Columns("A:P").Select
+    Columns("A:P").EntireColumn.AutoFit
+    Range("L13").Select
+   
+End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Private Sub cmdImportExcel_Click()
+' import excel file
+
+Dim importFileName As Variant
+Dim importWorkbook As Workbook
+Dim importSheet As Worksheet
+Dim importRange As Range
+       
+    ' show open file dialog
+    importFileName = Application.GetOpenFilename(FileFilter:="Arquivo do Excel (*.xls; *.xlsx), *.xls;*.xlsx", Title:="Escolha um arquivo do Excel")
+    
+    ' if user pressed cancel buton: exit
+    If importFileName = False Then Exit Sub
+    
+    Application.ScreenUpdating = False
+    
+         ' if user selected a excel file, open it
+         Set importWorkbook = Application.Workbooks.Open(importFileName)
+         Set importSheet = importWorkbook.Worksheets(1)
+
+         ' copy from import sheet
+         Set importRange = importSheet.Range( _
+             importSheet.Range("A2:C65000"), _
+             importSheet.Range("I" & importSheet.Rows.Count).End(xlUp) _
+         )
+         
+         importRange.Copy
+         
+         ' paste into Data sheet
+         Planilha1.Range("A1").PasteSpecial xlValues
+         Planilha1.Range("A1").PasteSpecial xlPasteFormats
+         Application.CutCopyMode = False
+ 
+ importWorkbook.Close
+       
+End Sub
+
+
+
+-----------------------------------------------------------------------------
+
+
+Sub criarArquivo()
+
+On Error GoTo erro
+Dim arquivo As Workbook
+Dim plan As String
+
+plan = "Planilha1"
+
+Set arquivo = Application.Workbooks.Add
+
+ThisWorkbook.Sheets(plan).Copy before:=arquivo.Sheets(1)
+
+arquivo.SaveAs ThisWorkbook.Path & "\" & plan & "xls"
+arquivo.Close
+
+Exit Sub
+erro:
+MsgBox "Erro ao criar arquivo"
+
+
+End Sub
+
+Sub AddNew2()
+    Dim arquivo As Workbook
+    Dim xWs As Worksheet
+    Dim Rng As Range
+    Dim plan As String
+    
+    Planilha1.Range(Cells(1, 1), Cells(18, 12)).Select
+    Set Rng = Application.Selection
+    Application.Workbooks.Add
+    Set xWs = Application.ActiveSheet
+    Rng.Copy Destination:=xWs.Range("A1")
+    xWs.SaveAs ThisWorkbook.Path & "\" & "NovoPlanilha"
+    'xWs.Close
+
+End Sub

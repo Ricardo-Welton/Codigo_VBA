@@ -1,0 +1,8 @@
+Sub teste()
+Dim hoje As Integer
+Data = "15/03/2022"
+hoje = Weekday(Data)
+
+MsgBox (hoje)
+
+End Sub

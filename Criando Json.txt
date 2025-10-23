@@ -1,0 +1,108 @@
+Sub ConverteJson()
+Dim nomeArquivo As String
+Dim linha1 As Range
+Dim celAtual As Range
+Dim contaColunas As Integer
+contaColunas = 43
+j = 26
+Dim Cabecalhos(1 To 43) As String
+Dim textoRetorno As String
+
+    textoRetorno = "{" & """" & "Tranferencia" & """:" & vbLf
+
+        textoRetorno = textoRetorno & "{"
+        For i = 1 To contaColunas
+            If i = 3 Then
+       
+                textoRetorno = textoRetorno & """" & "TedDoc" & """:" & "{" & vbLf
+           
+            End If
+            If i = 16 Then
+       
+                textoRetorno = textoRetorno & "}" & ","
+           
+            End If
+           
+            Cabecalhos(i) = BPlanTed.Cells(1, j)
+            textoRetorno = textoRetorno & """" & Cabecalhos(i) & """:" & """" & BPlanTed.Cells(2, j) & """"
+                j = j + 1
+            If (i = contaColunas) Then
+               
+                 textoRetorno = textoRetorno & "}" & vbLf
+            Else
+                textoRetorno = textoRetorno & ","
+            End If
+        Next
+       
+    textoRetorno = textoRetorno & "}"
+
+   
+    nomeArquivo = "C:\temp" & "\Ted.json"
+   
+    Open nomeArquivo For Output As #1
+   
+    Print #1, textoRetorno
+    Close #1
+   
+End Sub
+Sub ConverteJson2()
+Dim nomeArquivo As String
+Dim linha1 As Range
+Dim celAtual As Range
+Dim contaColunas As Integer
+contaColunas = 43
+j = 26
+Dim Cabecalhos(1 To 43) As String
+Dim textoRetorno As String
+
+    textoRetorno = "{" & vbNewLine
+
+        textoRetorno = textoRetorno & "   " & """" & "Tranferencia" & """:" & "{" & vbNewLine
+        For i = 1 To contaColunas
+            If i = 3 Then
+       
+                textoRetorno = textoRetorno & "    " & """" & "TedDoc" & """:" & "{" & vbLf
+           
+            End If
+            If i = 16 Then
+       
+                textoRetorno = textoRetorno & "    " & "}" & "," & vbLf
+           
+            End If
+           
+            If i < 3 Or i > 15 Then
+           
+            Cabecalhos(i) = BPlanTed.Cells(1, j)
+            textoRetorno = textoRetorno & "    " & """" & Cabecalhos(i) & """:" & """" & BPlanTed.Cells(2, j) & """"
+           
+            End If
+           
+            If i >= 3 And i < 16 Then
+           
+            Cabecalhos(i) = BPlanTed.Cells(1, j)
+            textoRetorno = textoRetorno & "      " & """" & Cabecalhos(i) & """:" & """" & BPlanTed.Cells(2, j) & """"
+           
+            End If
+                     
+           
+           
+                j = j + 1
+            If (i = contaColunas) Then
+                 textoRetorno = textoRetorno & vbLf
+                 textoRetorno = textoRetorno & "   " & "}" & vbLf
+            Else
+                textoRetorno = textoRetorno & "," & vbLf
+            End If
+        Next
+       
+    textoRetorno = textoRetorno & "}"
+
+   
+    nomeArquivo = "C:\temp" & "\Ted.json"
+   
+    Open nomeArquivo For Output As #1
+   
+    Print #1, textoRetorno
+    Close #1
+   
+End Sub

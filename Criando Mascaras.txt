@@ -1,0 +1,12 @@
+Private Sub TextcadCPF_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
+TextcadCPF.MaxLength = 14 '000.000.000-00
+ Select Case KeyAscii
+      Case 8       'Aceita o BACK SPACE
+      Case 13: SendKeys "{TAB}"    'Emula o TAB
+      Case 48 To 59
+         If TextcadCPF.SelStart = 3 Then TextcadCPF.SelText = "."
+         If TextcadCPF.SelStart = 7 Then TextcadCPF.SelText = "."
+         If TextcadCPF.SelStart = 11 Then TextcadCPF.SelText = "-"
+      Case Else: KeyAscii = 0     'Ignora os outros caracteres
+   End Select
+End Sub

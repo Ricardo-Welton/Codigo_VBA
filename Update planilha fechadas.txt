@@ -1,0 +1,115 @@
+Sub AtualizarDadosPlanilhaFechada()
+    Dim cn As Object
+    Dim strArquivo As String
+    Dim strPlanilha As String
+    Dim strSQL As String
+    
+    ' ?? Definição das variáveis de atualização
+    Dim cnpjAtualizar As String
+    Dim tipoCondominio As String
+    Dim tipoFundo As String
+    Dim fic As String
+    
+    ' ?? Atribuir valores às variáveis (exemplo, pode ser alterado conforme necessário)
+    cnpjAtualizar = "15078010000117"
+    tipoCondominio = "Aberto"
+    tipoFundo = "Fundo de Investimento"
+    fic = "Sim"
+    
+    ' ?? Definir o caminho do arquivo fechado
+    strArquivo = PlanFA03.Cells(3, 2).value
+    
+    ' ?? Nome da aba onde os dados estão
+    strPlanilha = "Dados Fundos Ajustado$"
+    
+    ' ?? Criar a conexão ADO
+    Set cn = CreateObject("ADODB.Connection")
+    
+    ' ?? Abrir a conexão com o arquivo Excel (modo de atualização)
+    cn.Open "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" & strArquivo & ";Extended Properties=""Excel 12.0;HDR=Yes;"";"
+    
+    ' ?? Criar a consulta SQL para atualizar os dados com base no CNPJ informado
+    strSQL = "UPDATE [" & strPlanilha & "] " & _
+             "SET [TIPO DE CONDOMÍNIO] = '" & tipoCondominio & "', " & _
+             "[TIPO DE FUNDO] = '" & tipoFundo & "', " & _
+             "[FIC] = '" & fic & "' " & _
+             "WHERE [CNPJ_FUNDO] = " & cnpjAtualizar & ""
+    
+    ' ?? Executar a consulta SQL
+    cn.Execute strSQL
+    
+    ' ?? Fechar conexão
+    cn.Close
+    Set cn = Nothing
+    
+    ' ?? Mensagem de sucesso
+    MsgBox "Dados atualizados com sucesso no arquivo fechado!", vbInformation
+End Sub
+
+----------------------------------------------------------------------------
+
+Sub ConsultaAtualizacao3()
+    Dim ConexaoPlan As Object
+    Dim sql As String
+    Dim caminho As String
+    Dim CNPJ_A_SER_ALTERADO As String
+    
+    ' Criar a conexão
+    Set ConexaoPlan = CreateObject("ADODB.Connection")
+    
+    ' Limpar células antes da execução
+    PlanFA02.Activate
+    PlanFA02.Range("A2").Select
+    
+    ' Definir caminho do arquivo e CNPJ
+    caminho = PlanFA03.Cells(3, 2).value
+    CNPJ_A_SER_ALTERADO = Trim(PlanFA02.Cells(2, 2).value) ' Remove espaços extras
+    
+    ' Verificar se os valores estão preenchidos corretamente
+    If caminho = "" Then
+        MsgBox "Erro: O caminho do arquivo não foi encontrado!", vbCritical, "Erro"
+        Exit Sub
+    End If
+    
+    If CNPJ_A_SER_ALTERADO = "" Then
+        MsgBox "Erro: Nenhum CNPJ informado!", vbCritical, "Erro"
+        Exit Sub
+    End If
+    
+    ' Abrir conexão
+    ConexaoPlan.ConnectionString = "Provider=Microsoft.ACE.OLEDB.12.0;" & _
+                                   "Data Source=" & caminho & ";" & _
+                                   "Extended Properties=""Excel 12.0;HDR=Yes"";"
+    
+    On Error Resume Next
+    ConexaoPlan.Open
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao conectar ao arquivo! Verifique o caminho e se o arquivo está fechado.", vbCritical, "Erro"
+        Exit Sub
+    End If
+    On Error GoTo 0
+    
+    ' Criar SQL para atualizar os dados
+    sql = "UPDATE [Dados Fundos Ajustado$] " & _
+          "SET [TIPO DE CONDOMÍNIO] = 'NOVO_VALOR_1', " & _
+          "    [TIPO DE FUNDO] = 'NOVO_VALOR_2', " & _
+          "    [FIC] = 'NOVO_VALOR_3' " & _
+          "WHERE [CNPJ_FUNDO] = " & CNPJ_A_SER_ALTERADO & ";"
+    
+    ' Executar SQL
+    On Error Resume Next
+    ConexaoPlan.Execute sql
+    If Err.Number <> 0 Then
+        MsgBox "Erro ao executar a consulta SQL. Verifique os nomes das colunas.", vbCritical, "Erro SQL"
+        ConexaoPlan.Close
+        Exit Sub
+    End If
+    On Error GoTo 0
+
+    ' Fechar conexão
+    ConexaoPlan.Close
+    Set ConexaoPlan = Nothing
+    
+    ' Mensagem de confirmação
+    MsgBox "Dados atualizados com sucesso!", vbInformation, "Atualização Concluída"
+End Sub

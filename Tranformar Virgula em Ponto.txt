@@ -1,0 +1,20 @@
+Sub Macro1()
+Dim texto As String
+Dim VarLat As String, VarLong As String, VarLat1 As String, VarLong1 As String
+Dim txtPart1 As String, txtPart2 As String, txtPart3 As String
+Dim num As Range
+
+Planilha1.Range("B2:B20").Select
+Selection.NumberFormat = "@"
+
+For Each num In Selection
+
+'VarLat = Planilha1.Cells(num, 2)
+'VarLat1 = Replace(VarLat, ",", ".")
+num.Value = Replace(num.Value, ",", ".")
+
+'Planilha1.Cells(1, 2) = VarLat1
+
+Next num
+
+End Sub

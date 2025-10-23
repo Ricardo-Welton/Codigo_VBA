@@ -1,0 +1,23 @@
+Sub MoverVirgulaParaOitavaCasa()
+    Dim numero As Double
+    i = 2
+    
+    Planilha2.Select
+    Range("M2:M65000").Select
+    Selection.NumberFormat = "0.00000000"
+    
+   Do While Planilha2.Cells(i, 1) <> ""
+   
+   If Planilha2.Cells(i, 13) <> "" Then
+   
+    numero = Replace(Planilha2.Cells(i, 13).Value, ",", "")
+    Planilha2.Cells(i, 13) = numero / 100000000
+    
+   End If
+   
+    i = i + 1
+    
+   Loop
+   
+   
+End Sub
