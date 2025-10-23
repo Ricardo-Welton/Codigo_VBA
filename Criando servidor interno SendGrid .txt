@@ -1,0 +1,134 @@
+Sub Manufactureremail1()
+'sends email to manufacturer using Sendgrid
+'Application.ScreenUpdating = False
+ 'While (True)
+    Dim iMsg As Object
+    Dim iConf As Object
+    Dim strbody As String
+    '    Dim Flds As Variant
+
+    Set iMsg = CreateObject("CDO.Message")
+    Set iConf = CreateObject("CDO.Configuration")
+
+        iConf.Load -1    ' CDO Source Defaults
+        Set Flds = iConf.Fields
+        With Flds
+            .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2
+            .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") _
+                           = "smtp.sendgrid.net"
+            .Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = 587
+            .Item("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate") = 1
+            .Item("http://schemas.microsoft.com/cdo/configuration/sendusername") = "apikey"
+            .Item("http://schemas.microsoft.com/cdo/configuration/sendpassword") = "Senha"
+            .Update
+        End With
+
+    
+
+    With iMsg
+        Set .Configuration = iConf
+        .To = "ricardowelto@gmail.com"
+        .CC = ""
+        '.BCC = Application.WorksheetFunction.VLookup(Selection.Cells(2, 3), Worksheets("Contacts").Range("email_data"), 2, False)
+        .From = """Ricardo"" <ricardo.fasters@singulare.com.br>"
+        .Subject = "Testando "
+        
+        '.addattachment Worksheets("Contacts").Range("I6")
+        '.addattachment Worksheets("Contacts").Range("I7")
+        
+        .HTMLBody = "Espero que der certo"
+        .Send
+       'MsgBox "Emails Sent!", vbInformation, "Success"
+    
+    End With
+ 'DoEvents
+ 'Wend
+'Application.ScreenUpdating = True
+End Sub
+
+
+
+
+
+
+
+--------------------------------------------------------------------outro modelo------------------------------
+
+Dim iMsg As Object
+    Dim iConf As Object
+    Dim strbody As String
+    '    Dim Flds As Variant
+
+    Set iMsg = CreateObject("CDO.Message")
+    Set iConf = CreateObject("CDO.Configuration")
+
+        iConf.Load -1    ' CDO Source Defaults
+        Set Flds = iConf.fields
+        With Flds
+            .Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2
+            .Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "172.28.4.123"
+            .Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = 25
+            '.Item("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate") = 1
+            .Item("http://schemas.microsoft.com/cdo/configuration/sendusername") = "ricardo.faster@singulare.com.br"
+            '.Item("http://schemas.microsoft.com/cdo/configuration/sendpassword") = "mypassword"
+            .Update
+        End With
+
+
+endcaminho = Environ$("USERPROFILE")
+'If EndArquivo = "Sim" Then
+'file = FundosPlan1.Cells(21, 1) & FundosPlan1.Cells(2, 1) & "_" & FundosPlan1.Cells(19, 2) & "_" & FundosPlan1.Cells(21, 2) & ".xlsx"
+'End If
+
+With iMsg
+Set .Configuration = iConf
+.To = EndEmail
+'.ReplyRecipients.Add "ricardo.faster@singulare.com.br"
+.CC = "ricardo.faster@singulare.com.br"
+.From = "ricardo.faster@singulare.com.br"
+.Subject = FundosPlan1.Cells(12, 1)
+'If EndArquivo = "Sim" Then
+'.AddAttachment file
+'End If
+corpo = vbNullString
+'scorpo = scorpo & "<img src=" & endcaminho & "\Cabecalho.jpg>"
+scorpo = scorpo & tabhtml
+'scorpo = scorpo & "<img src=" & endcaminho & "\Rodape.jpg>"
+.HTMLBody = scorpo
+'.Display
+.Send
+End With
+
+
+-----------------------------------------------------
+
+ublic Sub SendSimpleCDOMail()
+
+    Dim mail    As CDO.MESSAGE          
+    Dim config  As CDO.Configuration    
+    
+    Set mail = CreateObject("CDO.Message")
+    Set config = CreateObject("CDO.Configuration")
+    
+    config.Fields(cdoSendUsingMethod).Value = cdoSendUsingPort
+    config.Fields(cdoSMTPServer).Value = "mail.mycompany.invalid"
+    config.Fields(cdoSMTPServerPort).Value = 25
+    config.Fields.Update
+    
+    Set mail.Configuration = config
+    
+    With mail
+        .To = "someone@somewhere.invalid"
+        .From = "me@mycompany.invalid"
+        .Subject = "First email with CDO"
+        .TextBody = "This is the body of the first plain text email with CDO."
+        
+        .AddAttachment "C:\path\to\a\file.dat"
+        
+        .Send
+    End With
+    
+    Set config = Nothing
+    Set mail = Nothing
+    
+End Sub
