@@ -1,0 +1,66 @@
+name: CI do Projeto Raiz
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout do Código
+      uses: actions/checkout@v4
+
+    # CI do BACKEND 
+    - name: Configurar Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17' 
+        distribution: 'temurin'
+        cache: 'maven'
+    
+    - name:  Build do Backend com Maven
+      run: |
+        cd backend
+        # O comando 'test' é crucial para a fase de CI
+        # O comando 'package' cria o JAR/WAR. Se o Teste for suficiente para CI, use 'install' ou 'test'
+        mvn clean install -DskipTests
+        # Executar os testes
+        mvn test
+      
+    # CI do FRONTEND 
+    - name: Configurar Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' 
+        cache: 'npm'
+        cache-dependency-path: 'frontend/package-lock.json' 
+
+    - name: Instalar Dependências do Frontend
+      run: |
+        cd frontend
+        npm ci # npm ci é mais rápido e confiável para CI do que npm install
+    
+    - name: Executar Testes Unitários do Frontend #(Ex: Jest/Karma/Jasmine)
+      run: |
+        cd frontend
+        # Este comando pode variar (ex: ng test --watch=false)
+        npm run test -- --no-watch --browsers=ChromeHeadless
+      env:
+        # Configurações de ambiente para testes 
+        CHROME_BIN: /usr/bin/google-chrome
+        DISPLAY: :99
+
+    - name: Build de Produção do Frontend
+      run: |
+        cd frontend
+        # Este comando geralmente gera a pasta 'dist'
+        npm run build -- --configuration=production
+    
